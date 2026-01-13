@@ -1,0 +1,136 @@
+{
+  "EmsEnergyOptimisationAsset": {
+    "viewerStyles": {},
+    "panels": [
+      {
+        "type": "group",
+        "title": "underlyingAssets"
+      },
+      {
+        "type": "info",
+        "hideOnMobile": true,
+        "properties": {
+          "include": []
+        },
+        "attributes": {
+          "include": [
+            "notes"
+          ]
+        }
+      },
+      {
+        "type": "info",
+        "column": 1,
+        "title": "location",
+        "properties": {
+          "include": []
+        },
+        "attributes": {
+          "include": [
+            "location"
+          ],
+          "itemConfig": {
+            "location": {
+              "label": ""
+            }
+          }
+        }
+      },
+      {
+        "type": "info",
+        "title": "General",
+        "properties": {
+          "include": []
+        },
+        "attributes": {
+          "include": [
+            "enableDetailedLogging",
+            "optimisationDisabled",
+            "optimisationMethod"
+          ]
+        }
+      },
+      {
+        "type": "info",
+        "title": "Power Limits Input",
+        "properties": {
+          "include": []
+        },
+        "attributes": {
+          "include": [
+            "generatePowerLimitMaximumProfileManualInput",
+            "generatePowerLimitMinimumProfileManualInput",
+            "powerLimitMaximumInput",
+            "powerLimitMaximumProfileManualInput",
+            "powerLimitMinimumInput",
+            "powerLimitMinimumProfileManualInput"
+          ]
+        }
+      },
+      {
+        "type": "info",
+        "title": "Power Limits",
+        "properties": {
+          "include": []
+        },
+        "attributes": {
+          "include": [
+            "powerLimitMaximumProfileManual",
+            "powerLimitMaximumProfileTotal",
+            "powerLimitMinimumProfileManual",
+            "powerLimitMinimumProfileTotal"
+          ]
+        }
+      },
+      {
+        "type": "info",
+        "title": "Power",
+        "properties": {
+          "include": []
+        },
+        "attributes": {
+          "include": [
+            "powerConsumption",
+            "powerFlexible",
+            "powerNet",
+            "powerProduction"
+          ]
+        }
+      },
+      {
+        "type": "info",
+        "title": "Energy",
+        "properties": {
+          "include": []
+        },
+        "attributes": {
+          "include": [
+            "energyExportTotal",
+            "energyImportTotal"
+          ]
+        }
+      },
+      {
+        "type": "info",
+        "title": "Tariffs",
+        "properties": {
+          "include": []
+        },
+        "attributes": {
+          "include": [
+            "tariffExport",
+            "tariffImport"
+          ]
+        }
+      },
+      {
+        "type": "history",
+        "column": 1
+      },
+      {
+        "type": "linkedUsers",
+        "column": 1
+      }
+    ]
+  }
+}

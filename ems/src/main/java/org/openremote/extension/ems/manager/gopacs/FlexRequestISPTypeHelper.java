@@ -1,0 +1,75 @@
+/*
+ * Copyright 2025, OpenRemote Inc.
+ *
+ * See the CONTRIBUTORS.txt file in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.openremote.extension.ems.manager.gopacs;
+
+import java.time.*;
+
+public class FlexRequestISPTypeHelper {
+    private static final long ISP_DURATION_IN_MINUTES = 15;
+
+    public static LocalTime getISPStart(long ispNumber, int year, int month, int day, String timeZone) {
+        ZoneId zoneId = ZoneId.of(timeZone);
+        ZonedDateTime date = ZonedDateTime.of(year, month, day, 0, 0, 0, 0, zoneId);
+
+        if (ispNumber == 9 && isLastSundayInMarch(year, month, day)) {
+            return date.plusHours(3).toLocalTime();
+        } else if (ispNumber == 13 && isLastSundayInOctober(year, month, day)) {
+            return date.plusHours(2).toLocalTime();
+        } else {
+            return date.plusMinutes((ispNumber - 1) * ISP_DURATION_IN_MINUTES).toLocalTime();
+        }
+    }
+
+    public static LocalTime getISPEnd(int ispNumber, int year, int month, int day, String timeZone) {
+        LocalTime end = getISPStart(ispNumber, year, month, day, timeZone).plusMinutes(ISP_DURATION_IN_MINUTES);
+        if (ispNumber == 8 && isLastSundayInMarch(year, month, day)) {
+            end = end.plusHours(1);
+        } else if (ispNumber == 12 && isLastSundayInOctober(year, month, day)) {
+            end = end.minusHours(1);
+        }
+        return end;
+    }
+
+    private static boolean isLastSundayInMarch(int year, int month, int day) {
+        if (month != 3) { // March is 3 in Java's month numbering
+            return false;
+        }
+        LocalDate date = LocalDate.of(year, month, day);
+        int lastDayInMarch = YearMonth.of(year, month).lengthOfMonth();
+        LocalDate lastSundayInMarch = LocalDate.of(year, month, lastDayInMarch);
+        while (lastSundayInMarch.getDayOfWeek() != DayOfWeek.SUNDAY) {
+            lastSundayInMarch = lastSundayInMarch.minusDays(1);
+        }
+        return date.equals(lastSundayInMarch);
+    }
+
+    private static boolean isLastSundayInOctober(int year, int month, int day) {
+        if (month != 10) { // October is 10 in Java's month numbering
+            return false;
+        }
+        LocalDate date = LocalDate.of(year, month, day);
+        int lastDayInOctober = YearMonth.of(year, month).lengthOfMonth();
+        LocalDate lastSundayInOctober = LocalDate.of(year, month, lastDayInOctober);
+        while (lastSundayInOctober.getDayOfWeek() != DayOfWeek.SUNDAY) {
+            lastSundayInOctober = lastSundayInOctober.minusDays(1);
+        }
+        return date.equals(lastSundayInOctober);
+    }
+}
