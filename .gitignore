@@ -1,0 +1,49 @@
+# Build and Release Folders
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
+[Bb]uild/
+[Oo]ut/
+[Tt]mp/
+
+# Other files and folders
+.settings/
+.gradle/
+.node/
+.classpath/
+.classpath
+.project/
+.project
+.vscode/
+.idea/
+.sts4-cache/
+.local/
+.DS_*
+node_modules/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Specific files and logs
+openremote.log
+yarn-error.log
+local.properties
+
+# File extensions
+*.mbtiles
+*.air
+*.ipa
+*.apk
+*.dab
+*.sh
+*.iml
+*.ipr
+*.iws
+*.tsbuildinfo
+*~
+*.tar.gz
