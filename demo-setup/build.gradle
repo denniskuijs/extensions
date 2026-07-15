@@ -1,4 +1,3 @@
-apply plugin: "groovy"
 apply plugin: "java-library"
 apply plugin: "maven-publish"
 apply plugin: "signing"
@@ -9,16 +8,7 @@ base {
 
 dependencies {
     api "io.openremote:openremote-manager:$openremoteVersion"
-    api "io.openremote:openremote-model:$openremoteVersion"
-
-    api libs.resteasyClientApi
-    implementation libs.shapeshifter
-
-    testImplementation "io.openremote:openremote-test:$openremoteVersion"
-    // Standalone (shaded) WireMock so its embedded Jetty/Jackson don't clash with the manager's web stack;
-    // used to mock the GOPACS broker / OAuth2 / address-book HTTP endpoints (the broker send goes through
-    // java.net.http.HttpClient, which a JAX-RS ClientRequestFilter cannot intercept).
-    testImplementation libs.wireMock
+    implementation project(":energy")
 }
 
 jar {
@@ -41,8 +31,8 @@ publishing {
             artifactId = "openremote-${project.name}-extension"
             from components.java
             pom {
-                name = 'OpenRemote EMS extension'
-                description = 'Adds the EMS extension'
+                name = 'OpenRemote Demo setup'
+                description = 'Adds the OpenRemote Demo setup'
                 url = 'https://github.com/openremote/extensions'
                 licenses {
                     license {
@@ -88,4 +78,14 @@ signing {
         useInMemoryPgpKeys(signingKey, signingPassword)
         sign publishing.publications.maven
     }
+}
+
+tasks.register("copyExtension", Copy) {
+    dependsOn jar
+    from(jar.archiveFile)
+    into project(":deployment").layout.buildDirectory.dir("extensions")
+}
+
+tasks.named('build') {
+    dependsOn('copyExtension')
 }
