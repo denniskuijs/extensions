@@ -112,6 +112,7 @@ jobs:
           platforms: linux/amd64,linux/aarch64
           load: false
           push: false
+          outputs: type=oci,dest=/tmp/myapp.tar
           tags: denniskuijs/manager:develop
           build-args: |
             GIT_COMMIT=${{ github.sha }}
