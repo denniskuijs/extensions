@@ -152,7 +152,7 @@ jobs:
       - name: Run deployment on demo server
         run: gh workflow run deploy.yml -R denniskuijs/openremote -f ENVIRONMENT="demo" -f CLEAN_INSTALL="true"
         env:
-          GH_TOKEN: ${{ secrets.GH_EXTENSIONS_TOKEN }}
+          GH_TOKEN: ${{ secrets._TEMP_GH_EXTENSIONS_TOKEN }}
 
       - name: Archive test results
         if: always()
