@@ -86,12 +86,12 @@ jobs:
           
           ./gradlew test
 
-      - name: Login to DockerHub
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
-        with:
-          username: ${{ secrets._TEMP_DOCKERHUB_USER }}
-          password: ${{ secrets._TEMP_DOCKERHUB_PASSWORD }}
+#      - name: Login to DockerHub
+#        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+#        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
+#        with:
+#          username: ${{ secrets._TEMP_DOCKERHUB_USER }}
+#          password: ${{ secrets._TEMP_DOCKERHUB_PASSWORD }}
 
       - name: Install QEMU
         if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
@@ -111,7 +111,7 @@ jobs:
           context: deployment/build
           platforms: linux/amd64,linux/aarch64
           load: false
-          push: true
+          push: false
           tags: denniskuijs/manager:develop
           build-args: |
             GIT_COMMIT=${{ github.sha }}
@@ -128,7 +128,7 @@ jobs:
           context: deployment/build
           platforms: linux/amd64,linux/aarch64
           load: false
-          push: true
+          push: false
           tags: |
             denniskuijs/manager:${{ inputs.version }}
             denniskuijs/manager:latest
@@ -139,15 +139,15 @@ jobs:
           DOCKER_BUILD_SUMMARY: false
           DOCKER_BUILD_RECORD_UPLOAD: false
 
-      - name: Publish to Maven Sonatype
-        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
-        timeout-minutes: 20
-        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -PsigningKey=$MAVEN_SIGNING_KEY -PsigningPassword=$MAVEN_SIGNING_PASSWORD -PpublishUsername=$MAVEN_USERNAME -PpublishPassword=$MAVEN_PASSWORD
-        env:
-          MAVEN_SIGNING_KEY: ${{ secrets._TEMP_MAVEN_SIGNING_KEY }}
-          MAVEN_SIGNING_PASSWORD: ${{ secrets._TEMP_MAVEN_SIGNING_PASSWORD }}
-          MAVEN_USERNAME: ${{ secrets._TEMP_MAVEN_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets._TEMP_MAVEN_PASSWORD }}
+#      - name: Publish to Maven Sonatype
+#        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
+#        timeout-minutes: 20
+#        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -PsigningKey=$MAVEN_SIGNING_KEY -PsigningPassword=$MAVEN_SIGNING_PASSWORD -PpublishUsername=$MAVEN_USERNAME -PpublishPassword=$MAVEN_PASSWORD
+#        env:
+#          MAVEN_SIGNING_KEY: ${{ secrets._TEMP_MAVEN_SIGNING_KEY }}
+#          MAVEN_SIGNING_PASSWORD: ${{ secrets._TEMP_MAVEN_SIGNING_PASSWORD }}
+#          MAVEN_USERNAME: ${{ secrets._TEMP_MAVEN_USERNAME }}
+#          MAVEN_PASSWORD: ${{ secrets._TEMP_MAVEN_PASSWORD }}
 
       - name: Archive test results
         if: always()
