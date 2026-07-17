@@ -129,6 +129,7 @@ jobs:
           platforms: linux/amd64,linux/aarch64
           load: false
           push: false
+          outputs: type=docker,dest=/tmp/myapp.tar
           tags: |
             denniskuijs/manager:${{ inputs.version }}
             denniskuijs/manager:latest
@@ -138,6 +139,13 @@ jobs:
         env:
           DOCKER_BUILD_SUMMARY: false
           DOCKER_BUILD_RECORD_UPLOAD: false
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myapp-image
+          path: /tmp/myapp.tar
+          retention-days: 5
 
 #      - name: Publish to Maven Sonatype
 #        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
