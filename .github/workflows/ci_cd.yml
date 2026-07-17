@@ -29,6 +29,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
 
   build:
@@ -65,7 +68,11 @@ jobs:
 
       - name: Update openremoteVersion in gradle.properties
         if: ${{ github.event_name != 'pull_request' && inputs.version != '' }}
-        run: sed -i "s/^openremoteVersion = .*/openremoteVersion = $VERSION/" gradle.properties
+        run: |
+          sed -i "s/^openremoteVersion = .*/openremoteVersion = $VERSION/" gradle.properties
+          git add gradle.properties
+          git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "update openremoteVersion to $VERSION"
+          git push
         env:
           VERSION: ${{ inputs.version }}
 
@@ -158,7 +165,7 @@ jobs:
 #          MAVEN_USERNAME: ${{ secrets._TEMP_MAVEN_USERNAME }}
 #          MAVEN_PASSWORD: ${{ secrets._TEMP_MAVEN_PASSWORD }}
 
-      - name: Run deployment on demo server
+      - name: Run deployment
         run: gh workflow run deploy.yml -R denniskuijs/openremote -f ENVIRONMENT="demo" -f CLEAN_INSTALL="true"
         env:
           GH_TOKEN: ${{ secrets._TEMP_GH_EXTENSIONS_TOKEN }}
