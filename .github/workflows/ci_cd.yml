@@ -149,6 +149,11 @@ jobs:
 #          MAVEN_USERNAME: ${{ secrets._TEMP_MAVEN_USERNAME }}
 #          MAVEN_PASSWORD: ${{ secrets._TEMP_MAVEN_PASSWORD }}
 
+      - name: Run deployment on demo server
+        run: gh workflow run deploy.yml -R denniskuijs/openremote -f ENVIRONMENT="demo" -f CLEAN_INSTALL="true"
+        env:
+          GH_TOKEN: ${{ secrets.GH_EXTENSIONS_TOKEN }}
+
       - name: Archive test results
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
