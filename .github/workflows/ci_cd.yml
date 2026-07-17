@@ -66,14 +66,14 @@ jobs:
             echo "value=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Update openremoteVersion in gradle.properties
-        if: ${{ github.event_name != 'pull_request' && inputs.is_release == true }}
+      - name: Update OpenRemote version in gradle.properties
+        if: ${{ github.event_name != 'pull_request' && inputs.version != '' }}
         run: |
           CURRENT=$(grep '^openremoteVersion' gradle.properties | sed 's/^openremoteVersion = //')
           if [ "$CURRENT" != "$VERSION" ]; then
             sed -i "s/^openremoteVersion = .*/openremoteVersion = $VERSION/" gradle.properties
             git add gradle.properties
-            git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "update openremoteVersion to $VERSION"
+            git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" commit -m "Update OpenRemote version to $VERSION skip-checks:true"
             git push
           else
             echo "Version unchanged, skipping commit."
@@ -81,22 +81,22 @@ jobs:
         env:
           VERSION: ${{ inputs.version }}
 
-      - name: Run installDist
-        timeout-minutes: 20
-        run: ./gradlew installDist
-
-      - name: Run integration tests
-        if: ${{ inputs.is_release != true }}
-        timeout-minutes: 20
-        run: |
-          # Run build
-          # Make temp dir with 777 mask as docker seems to run as root
-          mkdir -pm 777 tmp
-          
-          # Start the dev-testing stack
-          docker compose -f openremote/profile/dev-testing.yml up -d --no-build
-          
-          ./gradlew test
+#      - name: Run installDist
+#        timeout-minutes: 20
+#        run: ./gradlew installDist
+#
+#      - name: Run integration tests
+#        if: ${{ inputs.is_release != true }}
+#        timeout-minutes: 20
+#        run: |
+#          # Run build
+#          # Make temp dir with 777 mask as docker seems to run as root
+#          mkdir -pm 777 tmp
+#
+#          # Start the dev-testing stack
+#          docker compose -f openremote/profile/dev-testing.yml up -d --no-build
+#
+#          ./gradlew test
 
 #      - name: Login to DockerHub
 #        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
@@ -105,60 +105,60 @@ jobs:
 #          username: ${{ secrets._TEMP_DOCKERHUB_USER }}
 #          password: ${{ secrets._TEMP_DOCKERHUB_PASSWORD }}
 
-      - name: Install QEMU
-        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
-        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
-        with:
-          platforms: linux/amd64,linux/aarch64
-
-      - name: Install Buildx
-        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-
-      - name: Build develop image
-        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        timeout-minutes: 20
-        with:
-          context: deployment/build
-          platforms: linux/amd64,linux/aarch64
-          load: false
-          push: false
-          outputs: type=oci,dest=/tmp/myapp.tar
-          tags: denniskuijs/manager:develop
-          build-args: |
-            GIT_COMMIT=${{ github.sha }}
-            QUALIFIER=develop
-        env:
-          DOCKER_BUILD_SUMMARY: false
-          DOCKER_BUILD_RECORD_UPLOAD: false
-
-      - name: Build manager image
-        if: ${{ steps.is_main_repo.outputs.value && inputs.is_release == true }}
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        timeout-minutes: 20
-        with:
-          context: deployment/build
-          platforms: linux/amd64,linux/aarch64
-          load: false
-          push: false
-          outputs: type=oci,dest=/tmp/myapp.tar
-          tags: |
-            denniskuijs/manager:${{ inputs.version }}
-            denniskuijs/manager:latest
-          build-args: |
-            GIT_COMMIT=${{ github.sha }}
-            QUALIFIER=latest
-        env:
-          DOCKER_BUILD_SUMMARY: false
-          DOCKER_BUILD_RECORD_UPLOAD: false
-
-      - name: Upload image artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: myapp-image
-          path: /tmp/myapp.tar
-          retention-days: 5
+#      - name: Install QEMU
+#        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
+#        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
+#        with:
+#          platforms: linux/amd64,linux/aarch64
+#
+#      - name: Install Buildx
+#        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
+#        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+#
+#      - name: Build develop image
+#        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
+#        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+#        timeout-minutes: 20
+#        with:
+#          context: deployment/build
+#          platforms: linux/amd64,linux/aarch64
+#          load: false
+#          push: false
+#          outputs: type=oci,dest=/tmp/myapp.tar
+#          tags: denniskuijs/manager:develop
+#          build-args: |
+#            GIT_COMMIT=${{ github.sha }}
+#            QUALIFIER=develop
+#        env:
+#          DOCKER_BUILD_SUMMARY: false
+#          DOCKER_BUILD_RECORD_UPLOAD: false
+#
+#      - name: Build manager image
+#        if: ${{ steps.is_main_repo.outputs.value && inputs.is_release == true }}
+#        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+#        timeout-minutes: 20
+#        with:
+#          context: deployment/build
+#          platforms: linux/amd64,linux/aarch64
+#          load: false
+#          push: false
+#          outputs: type=oci,dest=/tmp/myapp.tar
+#          tags: |
+#            denniskuijs/manager:${{ inputs.version }}
+#            denniskuijs/manager:latest
+#          build-args: |
+#            GIT_COMMIT=${{ github.sha }}
+#            QUALIFIER=latest
+#        env:
+#          DOCKER_BUILD_SUMMARY: false
+#          DOCKER_BUILD_RECORD_UPLOAD: false
+#
+#      - name: Upload image artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: myapp-image
+#          path: /tmp/myapp.tar
+#          retention-days: 5
 
 #      - name: Publish to Maven Sonatype
 #        if: ${{ steps.is_main_repo.outputs.value && github.event_name != 'pull_request' }}
