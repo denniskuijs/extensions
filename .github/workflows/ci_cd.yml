@@ -81,6 +81,7 @@ jobs:
           fi
         env:
           VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ secrets._TEMP_GH_EXTENSIONS_TOKEN }}
 
 #      - name: Run installDist
 #        timeout-minutes: 20
