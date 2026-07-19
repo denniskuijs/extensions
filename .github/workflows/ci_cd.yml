@@ -36,7 +36,6 @@ jobs:
 
   build:
     name: CI/CD
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
