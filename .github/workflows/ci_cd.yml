@@ -173,7 +173,7 @@ jobs:
 
       - name: Run deployment
         if: ${{ github.event_name != 'pull_request' }}
-        run: gh workflow run deploy.yml -R denniskuijs/openremote -f ENVIRONMENT="demo" -f CLEAN_INSTALL="true"
+        run: gh workflow run deploy.yml -R denniskuijs/openremote -f CLEAN_INSTALL="true"
         env:
           GH_TOKEN: ${{ secrets._TEMP_GH_EXTENSIONS_TOKEN }}
 
